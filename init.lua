@@ -1,4 +1,6 @@
-print("This file will be run at load time!")
+newscaster = {}
+
+print("Start mod newscaster at load time server!")
 
 minetest.register_node("newscaster:node", {
     description = "This is a node",
