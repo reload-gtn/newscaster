@@ -53,7 +53,7 @@ end
 --команда чата для установки интервала
 minetest.register_chatcommand("newscaster_duration", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Интервал новостного бота установлен на " .. param .. " секунд",
@@ -64,7 +64,7 @@ minetest.register_chatcommand("newscaster_duration", {
 --команда чата для отключения бота
 minetest.register_chatcommand("newscaster_disable", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Новостной бот отключен", set_is_enable(false)
@@ -74,7 +74,7 @@ minetest.register_chatcommand("newscaster_disable", {
 --команда чата для включения бота
 minetest.register_chatcommand("newscaster_enable", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Новостной бот включен", set_is_enable(true),
@@ -85,7 +85,7 @@ minetest.register_chatcommand("newscaster_enable", {
 --команда чата для добавления новости в массив
 minetest.register_chatcommand("newscaster_addnews", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Новость добавлена", add_news(param)
@@ -95,7 +95,7 @@ minetest.register_chatcommand("newscaster_addnews", {
 -- команда чата вернуть общее число новостей в базе
 minetest.register_chatcommand("newscaster_size", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Общее число новостей - " .. #news_massive
@@ -105,7 +105,7 @@ minetest.register_chatcommand("newscaster_size", {
 -- команда чата обновлить базу из файла
 minetest.register_chatcommand("newscaster_updatebase", {
     privs = {
-        system = true,
+        server = true,
     },
     func = function(name, param)
         return true, "Новости  обновлены", update_base()
