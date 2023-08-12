@@ -112,5 +112,5 @@ minetest.register_chatcommand("newscaster_updatebase", {
     end
 })
 
--- вызов функции рекурсии с публикации новости
+-- вызов функции рекурсии с публикацией первой новости
 minetest.after(duration, print_news)
