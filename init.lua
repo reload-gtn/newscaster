@@ -8,19 +8,29 @@ local is_enable = true
 local is_event_enable = false
 --массив новостей
 local news_massive = {}
---строчка с описание ивента
+--массив анекдотов
+local funny_massive = {}
+--строка с описание ивента
 local event
+--номер новостной базы
+local nubmer_base = 1
 --имя бота сервера
 local nameserver = minetest.colorize("cyan", "MTSR(бот): ")
 --адрес мода, путь
 local path = minetest.get_modpath("newscaster")
 --файл с новостями
 local file_news = io.lines(path .. "/news.txt", "r")
+local file_funny = io.lines(path .. "/funny.txt", "r")
 local file_event = io.open(path .. "/event.txt", "r")
 
 --чтение файлов с новостями и заполнение массива новостей
 for line in file_news do
     news_massive[#news_massive + 1] = line
+end
+
+--чтение файлов с анекдотами и заполнение массива новостей
+for line in file_funny do
+    funny_massive[#funny_massive + 1] = line
 end
 
 --функция чтение строчки с ивентом из файла
@@ -36,7 +46,13 @@ event = read_event_file(path .. "/event.txt")
 
 --функция вызова новостей в чат
 local function print_news()
+    if nubmer_base == 1 then
     minetest.chat_send_all(nameserver .. news_massive[math.random(1, #news_massive)])
+    nubmer_base = 2
+    else 
+        minetest.chat_send_all(nameserver .. minetest.colorize("green", "Шутка часа - ") .. funny_massive[math.random(1, #funny_massive)])
+        nubmer_base = 1
+    end
     if is_enable then
         minetest.after(duration, print_news)
         if is_event_enable then
@@ -50,6 +66,12 @@ local function add_news(value)
     news_massive[#news_massive + 1] = value
 end
 
+--функция добавления новости в массив
+local function add_funny(value)
+    description = "Добавление анекдота в базу"
+    funny_massive[#funny_massive + 1] = value
+end
+
 --функция установки интервала новостей
 local function set_duration(value)
     duration = value
@@ -61,6 +83,9 @@ local function update_base()
     news_massive = {}
     for line in io.lines(path .. "/news.txt", "r") do
         news_massive[#news_massive + 1] = line
+    end
+    for line in io.lines(path .. "/funny.txt", "r") do
+        funny_massive[#funny_massive + 1] = line
     end
 end
 
@@ -77,6 +102,7 @@ end
 
 --команда чата для установки интервала
 minetest.register_chatcommand("newscaster_duration", {
+    description = "Установка интервала вещания бота",
     privs = {
         server = true,
     },
@@ -88,6 +114,7 @@ minetest.register_chatcommand("newscaster_duration", {
 
 --команда чата для отключения бота
 minetest.register_chatcommand("newscaster_disable", {
+    description = "Отключение бота",
     privs = {
         server = true,
     },
@@ -98,6 +125,7 @@ minetest.register_chatcommand("newscaster_disable", {
 
 --команда чата для включения бота
 minetest.register_chatcommand("newscaster_enable", {
+    description = "Включение бота",
     privs = {
         server = true,
     },
@@ -109,6 +137,7 @@ minetest.register_chatcommand("newscaster_enable", {
 
 --команда чата для включения анонса ивента
 minetest.register_chatcommand("newscaster_event_enable", {
+    description = "Включение анонса ивента",
     privs = {
         server = true,
     },
@@ -119,6 +148,7 @@ minetest.register_chatcommand("newscaster_event_enable", {
 
 --команда чата для отключения анонса ивента
 minetest.register_chatcommand("newscaster_event_disable", {
+    description = "Отключение анонса ивента",
     privs = {
         server = true,
     },
@@ -129,6 +159,7 @@ minetest.register_chatcommand("newscaster_event_disable", {
 
 --команда чата для добавления новости в массив
 minetest.register_chatcommand("newscaster_addnews", {
+    description = "Добавление новости в базу",
     privs = {
         server = true,
     },
@@ -137,18 +168,31 @@ minetest.register_chatcommand("newscaster_addnews", {
     end
 })
 
--- команда чата вернуть общее число новостей в базе
-minetest.register_chatcommand("newscaster_size", {
+--команда чата для добавления анекдота в массив
+minetest.register_chatcommand("newscaster_addfunny", {
+    description = "Добавление анекдота в базу",
     privs = {
         server = true,
     },
     func = function(name, param)
-        return true, "Общее число новостей - " .. #news_massive
+        return true, "Анекдот добавлен", add_funny(param)
+    end
+})
+
+-- команда чата вернуть общее число новостей в базе
+minetest.register_chatcommand("newscaster_size", {
+    description = "Общее число новостей и анекдотов",
+    privs = {
+        interact = true,
+    },
+    func = function(name, param)
+        return true, "Общее число новостей и анекдотов - " .. #news_massive+#funny_massive
     end
 })
 
 -- команда чата обновлить базу из файла
 minetest.register_chatcommand("newscaster_updatebase", {
+    description = "Обновление баз новостей и анекдотов",
     privs = {
         server = true,
     },
